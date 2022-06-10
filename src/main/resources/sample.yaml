@@ -1,0 +1,180 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+openapi: 3.0.1
+info:
+  title: Sample Service
+  description: Sample Service
+  contact:
+    email: Tyler@service84.io
+  license:
+    name: The Apache License, Version 2.0
+  version: 1.0.0
+servers:
+- url: http://sample/
+- url: http://localhost:8080/
+paths:
+  /proverbs/{id}:
+    get:
+      summary: Get a proverb
+      tags:
+        - proverb
+      security:
+        - BearerAuth: []
+      operationId: get_proverb
+      parameters:
+      - $ref: '#/components/parameters/ProverbID'
+      responses:
+        200:
+          $ref: '#/components/responses/Proverb'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /proverbs/random:
+    get:
+      summary: Get a random proverb
+      tags:
+        - proverb
+      security:
+        - BearerAuth: []
+      operationId: get_random_proverb
+      responses:
+        200:
+          $ref: '#/components/responses/Proverb'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /quotes/{id}:
+    get:
+      summary: Get a quote
+      tags:
+        - quote
+      security:
+        - BearerAuth: []
+      operationId: get_quote
+      parameters:
+      - $ref: '#/components/parameters/QuoteID'
+      responses:
+        200:
+          $ref: '#/components/responses/Quote'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /quotes/random:
+    get:
+      summary: Get a random quote
+      tags:
+        - quote
+      security:
+        - BearerAuth: []
+      operationId: get_random_quote
+      responses:
+        200:
+          $ref: '#/components/responses/Quote'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    Proverb:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        proverb:
+          type: string
+    Quote:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        quote:
+          type: string
+        attribution:
+          type: string
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+  responses:
+    Proverb:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Proverb'
+    Quote:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Quote'
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    ProverbID:
+      in: path
+      name: id
+      description: ID of a proverb
+      required: true
+      schema:
+        type: string
+        format: uuid
+    QuoteID:
+      in: path
+      name: id
+      description: ID of a quote
+      required: true
+      schema:
+        type: string
+        format: uuid
+tags:
+  - name: proverb
+    description: Acts on or returns a proverb
+  - name: quote
+    description: Acts on or returns a quote

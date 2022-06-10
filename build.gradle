@@ -1,0 +1,145 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+plugins {
+  id 'org.springframework.boot' version '2.2.4.RELEASE'
+  id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+  id 'org.openapi.generator' version '4.2.3'
+  id 'maven-publish'
+  id 'eclipse'
+  id 'java'
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'java'
+
+apply from: 'version.gradle'
+
+def s84Group = 'io.service84.services'
+def s84CoreName = s84JarName.split('-')[0]
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      from(components.java)
+    }
+  }
+}
+
+jar {
+  archiveBaseName = s84JarName
+  archiveVersion = s84Version
+  enabled = true
+}
+
+project.plugins.withType(MavenPublishPlugin).all {
+  PublishingExtension publishing = project.extensions.getByType(PublishingExtension)
+
+  publishing.publications.withType(MavenPublication).all { mavenPublication ->
+    mavenPublication.pom {
+      name = s84Name
+      packaging = 'jar'
+      description = s84Description
+      groupId = s84Group
+      artifactId = s84JarName
+      version = s84Version
+    }
+  }
+}
+
+sourceCompatibility = 11.0
+
+sourceSets {
+  main {
+    java {
+      srcDir 'gen/main/java'
+    }
+  }
+}
+
+sourceSets {
+  main {
+    resources {
+      srcDir 'gen/main/resources'
+    }
+  }
+}
+
+repositories {
+  if (s84Version.endsWith('SNAPSHOT')) {
+    mavenLocal()
+  }
+
+  mavenCentral()
+}
+
+configurations.all {
+  exclude module: 'slf4j-jdk14'
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-security'
+
+  implementation 'org.openapitools:jackson-databind-nullable:0.2.1'
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.3'
+  implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+  implementation 'io.springfox:springfox-swagger2:2.7.0'
+  implementation 'javax.validation:validation-api:2.0.1.Final'
+  implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
+  ////////////////////////////////
+  //Test Dependencies/////////////
+  ////////////////////////////////
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+  useJUnitPlatform()
+}
+
+////////////////////////////////
+//API Stubs/////////////////////
+////////////////////////////////
+task deleteAPIStubs(type: Delete) {
+  delete "gen/main/java/io/service84/services/${s84CoreName}"
+}
+
+task generateAPIStubs(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+  inputSpec = "$rootDir/src/main/resources/${s84CoreName}.yaml"
+  outputDir = "$rootDir"
+  generatorName = 'spring'
+  library = 'spring-boot'
+  apiPackage = "io.service84.services.${s84CoreName}.api"
+  modelPackage = "io.service84.services.${s84CoreName}.dto"
+  modelNameSuffix = 'DTO'
+  configOptions = [
+    delegatePattern: 'True',
+    useTags: 'True',
+    hideGenerationTimestamp: 'True',
+    dateLibrary: 'java8',
+    sourceFolder: 'gen/main/java'
+  ]
+  typeMappings = [
+    OffsetDateTime: 'java.time.LocalDateTime'
+  ]
+}
+
+generateAPIStubs.dependsOn deleteAPIStubs
+
+compileJava.dependsOn generateAPIStubs
+
+eclipse {
+  autoBuildTasks generateAPIStubs
+  synchronizationTasks generateAPIStubs
+}
