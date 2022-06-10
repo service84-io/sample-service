@@ -16,6 +16,8 @@ limitations under the License.
 ## Usage
 This is a sample service that shows off automatic OpenAPI stub generation for Spring Services as well as publishing the OpenAPI definition of the service to a maven repository.
 
+[SampleScript](https://github.com/service84-io/sample-script) is the counter part showing automatic OpenAPI download and client generation
+
 Since the purpose of this repository is to showcase how to do something technical the API that is exposed by the service is a toy API related to proverbs and quotes.
 
 ## Build
