@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package io.service84.permission.api.rest;
+package io.service84.services.sample.api.rest;
 
 import java.util.ArrayList;
 import java.util.HashMap;

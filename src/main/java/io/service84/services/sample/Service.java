@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package io.service84.permission;
+package io.service84.services.sample;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
