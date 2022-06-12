@@ -21,11 +21,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @ComponentScan({"io.service84"})
-@EnableSwagger2
 @PropertySources({@PropertySource("classpath:application.properties")})
 public class Service {
   public static void main(String[] args) {
