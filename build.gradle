@@ -11,9 +11,9 @@
 // limitations under the License.
 
 plugins {
-  id 'org.springframework.boot' version '2.2.4.RELEASE'
+  id 'org.springframework.boot' version '2.7.0'
   id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-  id 'org.openapi.generator' version '4.2.3'
+  id 'org.openapi.generator' version '6.0.0'
   id 'maven-publish'
   id 'eclipse'
   id 'java'
@@ -88,15 +88,9 @@ configurations.all {
 
 dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'org.springframework.boot:spring-boot-starter-security'
 
-  implementation 'org.openapitools:jackson-databind-nullable:0.2.1'
-  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.3'
-  implementation 'com.google.code.findbugs:jsr305:3.0.2'
-
-  implementation 'io.springfox:springfox-swagger2:2.7.0'
-  implementation 'javax.validation:validation-api:2.0.1.Final'
-  implementation 'javax.xml.bind:jaxb-api:2.3.1'
+  implementation 'org.openapitools:jackson-databind-nullable:0.2.2'
+  implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
 
   ////////////////////////////////
   //Test Dependencies/////////////
